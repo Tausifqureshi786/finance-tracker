@@ -8,7 +8,7 @@ import path from 'path';
 // Initialize the express engine
 const app: express.Application = express();
 
-app.use(cors())
+// app.use(cors())
 
 // Take a port 3000 for running server.
 var port = normalize(process.env.PORT || '9000');
