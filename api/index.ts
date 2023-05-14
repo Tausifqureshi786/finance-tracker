@@ -9,7 +9,7 @@ import path from 'path';
 const app: express.Application = express();
 
 const withCors = cors({
-    origin: "*" 
+    origin: "http://18.224.179.219/" 
 })
 
 // Take a port 3000 for running server.
