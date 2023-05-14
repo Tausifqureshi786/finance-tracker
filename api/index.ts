@@ -8,9 +8,9 @@ import path from 'path';
 // Initialize the express engine
 const app: express.Application = express();
 
-app.use(cors({
-    origin: "*"
-}))
+const withCors = cors({
+    origin: "*" 
+})
 
 // Take a port 3000 for running server.
 var port = normalize(process.env.PORT || '9000');
@@ -52,5 +52,6 @@ app.listen(port, () => {
          http://localhost:${port}/`);
 });
 
-app.use("/testAPI", testAPIRouter);
-app.use("/parsepdf", pdfParseRouter)
+app.use("/testAPI",withCors, testAPIRouter);
+app.use("/parsepdf",withCors, pdfParseRouter)
+
