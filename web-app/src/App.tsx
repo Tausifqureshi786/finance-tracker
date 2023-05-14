@@ -11,7 +11,8 @@ function App() {
   const [apiResponse,setApiResponse] = useState<ApiResponse>({res: ""})
 
   useEffect(() => {
-    fetch("http://localhost:9000/parsepdf")
+    console.log(origin)
+    fetch(`${origin}/parsepdf`)
     .then(res => res.text())
     .then(res => setApiResponse({res: res}))
     .catch(error => {

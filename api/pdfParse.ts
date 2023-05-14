@@ -75,14 +75,14 @@ pdfParseRouter.get("/",  function(req,  res) {
                     // date only works for the year 2023
                     obj.date = new Date(splittedDateObj.month+ ' ' + splittedDateObj.day + " " + "2023")
                     elem.replace(`${match[0]}`, "")
-                    console.log(obj)
+                    // console.log(obj)
                     transactionObjectArr.push(obj)
                     // console.log(transactionObjectArr)
                 }
                 
             })
             // console.log(transactionObjectArr)
-            res.send(transactionObjectArr)
+            res.status(200).send(transactionObjectArr)
         } else
         res.send({error: "The pdf was not parsed"})
     })
