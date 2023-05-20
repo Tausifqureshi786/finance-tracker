@@ -1,26 +1,50 @@
-import express from 'express';
-import { normalize } from 'path';
-import {testAPIRouter} from './testAPI'
-import { pdfParseRouter } from './pdfParse';
+import bodyParser from 'body-parser';
 import cors from 'cors'
+import dotenv from 'dotenv'
+import express from 'express';
+import { authRouter } from './authRouter';
+import { normalize } from 'path';
+import { pdfParseRouter } from './pdfParse';
 import path from 'path';
+import {testAPIRouter} from './testAPI'
+import session from 'express-session'
+import KnexStore from 'connect-session-knex'
+import { db } from './db';
 
+dotenv.config()
 // Initialize the express engine
 const app: express.Application = express();
-
-const withCors = cors({
-    origin: "http://18.224.179.219/" 
-})
-
+const knexStore = KnexStore(session)
+const sessionStore = new knexStore({knex: db})
+const jsonParser = bodyParser.json()
 // Take a port 3000 for running server.
-var port = normalize(process.env.PORT || '9000');
- 
-app.set('port',port);
-
+const port = normalize(process.env.PORT || '9000');
 const _dirname = path.dirname("")
 const buildPath = path.join(_dirname  , "../web-app/build");
+ 
 
+const withCors = cors({
+    origin: process.env.origin 
+})
+
+app.set('port',port);
 app.use(express.static(buildPath))
+
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+});
+
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || "finance tracker app",
+        store: sessionStore,
+        resave: false,
+        saveUninitialized: false
+    })
+)
+
 
 app.get("/", function(req, res){
 
@@ -35,12 +59,6 @@ app.get("/", function(req, res){
 
 })
 
-
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
-
 // Handling '/' Request
 app.get('/', (_req, _res) => {
     _res.send("TypeScript With Express");
@@ -48,10 +66,11 @@ app.get('/', (_req, _res) => {
  
 // Server setup
 app.listen(port, () => {
-    console.log(`TypeScript with Express
-         http://localhost:${port}/`);
+    console.log(`TypeScript with Express listening at
+        ${process.env.origin}`);
 });
 
+app.use("/auth", withCors, jsonParser , authRouter)
 app.use("/testAPI",withCors, testAPIRouter);
 app.use("/parsepdf",withCors, pdfParseRouter)
 

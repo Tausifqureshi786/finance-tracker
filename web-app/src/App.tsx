@@ -9,6 +9,21 @@ type ApiResponse = {
 function App() {
   
   const [apiResponse,setApiResponse] = useState<ApiResponse>({res: ""})
+  let [userName, setUsername] = useState<String>("")
+  let [pass, setPassword] = useState<String>("")
+
+  const login = async () => {
+    const response = await fetch(`${origin}/auth`, {
+      method: "POST", 
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: userName,
+        password: pass
+      })
+    })
+    // return response.json()
+  }
+
 
   useEffect(() => {
     console.log(origin)
@@ -24,11 +39,30 @@ function App() {
     <div className="App">
       <div>
         <h1>
-          Finance Tracker App
+            Finance Tracker App
         </h1>
-        <p className='App-intre'> {apiResponse? apiResponse.res : ""}</p>
+        <div>
+          
+          <div className="usernameTxt" style= {{alignItems: "start"}}>
+              <label>Username: </label>
+              <input type="string" placeholder='enter your username' onChange={ (e) => {setUsername(e.target.value)}}></input>
+          </div>
+
+          <div className="passTxt"style= {{alignItems: "start"}}>
+              <label>Password: </label>
+              <input type="string" placeholder='enter your username' onChange={ (e) => {setPassword(e.target.value)}}></input>
+            </div>
+          </div>
+
+          <div>
+            <button onClick={login}>Login</button>
+          </div>
+        </div>
+        {/* <p className='App-intre'> {apiResponse? apiResponse.res : ""}</p> */}
+
+
       </div>
-    </div>
+
   );
 }
 

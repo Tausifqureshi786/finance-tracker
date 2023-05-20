@@ -2,6 +2,7 @@ import express  from "express";
 import { readFileSync } from "fs";
 import PdfParse from "pdf-parse";
 
+
 let pdfParseRouter = express.Router()
 
 const pdfRead = './April_Statements.pdf'
@@ -17,11 +18,7 @@ interface Transaction {
 const getPDF = async (file: string) => {
   try {
     let pdfExtract = await PdfParse(readFileSync(file))
-
-    // console.log("file contnet: ", pdfExtract.text)
-    // console.log("Total pages: ", pdfExtract.numpages)
     pdfContent += pdfExtract.text
-    // console.log("All content: ", pdfExtract.info)
     return pdfExtract.text
   } catch (error: any) {
     throw new Error(error)
@@ -31,10 +28,8 @@ const getPDF = async (file: string) => {
 const cleanString = (string: String): String[] => {
     let replacedString = string.trim()
     let transactionSplit = replacedString.split("\n") 
-
     let cleanTransactionsArr = transactionSplit.filter((val) => val !== '' && val !== "----" && val !== '|' 
     && !val.includes("OpeningBalance") && !val.includes("ClosingBalance"))
-
     return cleanTransactionsArr
 }
 
@@ -47,13 +42,9 @@ pdfParseRouter.get("/",  function(req,  res) {
     let transactionObjectArr: Transaction[]  = []
     const pdf =  getPDF(pdfRead).then(responsePdf => {
         if(responsePdf !== null && responsePdf !== "" ) {
-            
             let cleanTransactionsArr = cleanString(responsePdf.trim())
-            
             cleanTransactionsArr.forEach((elem, index, arr) => {
-            
                 let reg = /(Jan?|Feb?|Mar?|Apr?|May?|Jun?|Jul?|Aug?|Sep?|Oct?|Nov?|Dec?)+\d{1,2}/g
-                
                 let match = elem.match(reg)
                 if(match) {
                     let obj:Transaction = {
@@ -71,17 +62,12 @@ pdfParseRouter.get("/",  function(req,  res) {
                         obj.place = `${removedPriceFromElem} ${arr[index+1]} `
                     }
                     let splittedDateObj = splitDate(match[0])
-
                     // date only works for the year 2023
                     obj.date = new Date(splittedDateObj.month+ ' ' + splittedDateObj.day + " " + "2023")
                     elem.replace(`${match[0]}`, "")
-                    // console.log(obj)
                     transactionObjectArr.push(obj)
-                    // console.log(transactionObjectArr)
-                }
-                
+                }                
             })
-            // console.log(transactionObjectArr)
             res.status(200).send(transactionObjectArr)
         } else
         res.send({error: "The pdf was not parsed"})
