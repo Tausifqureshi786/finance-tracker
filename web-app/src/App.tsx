@@ -13,7 +13,7 @@ function App() {
   let [pass, setPassword] = useState<String>("")
 
   const login = async () => {
-    const response = await fetch(`${origin}/auth`, {
+    const response = await fetch(`${origin}/auth/login`, {
       method: "POST", 
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -50,7 +50,7 @@ function App() {
 
           <div className="passTxt"style= {{alignItems: "start"}}>
               <label>Password: </label>
-              <input type="string" placeholder='enter your username' onChange={ (e) => {setPassword(e.target.value)}}></input>
+              <input type="string" placeholder='enter your password' onChange={ (e) => {setPassword(e.target.value)}}></input>
             </div>
           </div>
 
