@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import cors from 'cors'
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv'
 import express from 'express';
 import { authRouter } from './authRouter';
@@ -10,6 +11,17 @@ import {testAPIRouter} from './testAPI'
 import session from 'express-session'
 import KnexStore from 'connect-session-knex'
 import { db } from './db';
+import userAuth from './middlewares/auth'
+
+
+declare module 'express-session' {
+    export interface SessionData {
+        user: {
+            username: string,
+            hash: string
+        }
+    }
+}
 
 dotenv.config()
 // Initialize the express engine
@@ -28,14 +40,13 @@ const withCors = cors({
 })
 
 app.set('port',port);
+
+
 app.use(express.static(buildPath))
-
-
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
 });
-
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "finance tracker app",
@@ -44,6 +55,8 @@ app.use(
         saveUninitialized: false
     })
 )
+app.use(cookieParser());
+
 
 
 app.get("/", function(req, res){
@@ -72,5 +85,9 @@ app.listen(port, () => {
 
 app.use("/auth", withCors, jsonParser , authRouter)
 app.use("/testAPI",withCors, testAPIRouter);
-app.use("/parsepdf",withCors, pdfParseRouter)
+app.use("/parsepdf", userAuth ,withCors, pdfParseRouter)
 
+app.get("/logout", (req, res) => {
+    res.cookie("jwt", "", { maxAge: 1 })
+    res.redirect("/")
+  })
