@@ -13,6 +13,7 @@ function App() {
   let [pass, setPassword] = useState<String>("")
 
   const login = async () => {
+
     const response = await fetch(`${origin}/auth/login`, {
       method: "POST", 
       headers: { 'Content-Type': 'application/json'},
@@ -24,6 +25,16 @@ function App() {
     // return response.json()
   }
 
+  const register = async () => {
+    const response = await fetch(`${origin}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: userName,
+        password: pass
+      })
+    })
+  }
 
   useEffect(() => {
     console.log(origin)
@@ -56,6 +67,7 @@ function App() {
 
           <div>
             <button onClick={login}>Login</button>
+            <button onClick={register}> Register</button>
           </div>
         </div>
         {/* <p className='App-intre'> {apiResponse? apiResponse.res : ""}</p> */}
