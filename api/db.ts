@@ -15,7 +15,7 @@ if(process.env.NODE_ENV === "dev") {
   pass= process.env.DB_PASS
   database= process.env.DB_NAME
 } else if(process.env.NODE_ENV === "production") {
-  host = process.env.RDS_HOSTNAME
+  host = process.env.RDS_HOST
   port= parseInt(process.env.DB_PORT ? process.env.DB_PORT : "3306")
   user = process.env.RDS_USER_MASTER
   pass = process.env.RDS_PASS_MASTER
